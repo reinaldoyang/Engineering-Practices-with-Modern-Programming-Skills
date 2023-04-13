@@ -1,0 +1,148 @@
+#include <vector>
+#include <iostream>
+#include <time.h>
+using namespace std;
+
+// A type alias declaration of a vector of double value
+using RealVec=vector<double>;
+
+// A type alias for vector dimensions (size)
+using Dim= RealVec::size_type;
+
+//A type alias for vector type (e.g. double)
+using DataType=RealVec::value_type;
+
+//A type alias for a vector of vectores with doubles= a real matrix
+using RealMatrix=vector<RealVec>;
+
+void nonDiagonalSum(RealMatrix m)
+{
+    //Accumulate elements except the diagonal
+    double non_diagonal_sum {};
+    
+    for (int r=0; r < m.size();++r)
+        for(int c=0;c<m[0].size();++c)
+            if (c != r)
+                non_diagonal_sum += m[r][c];
+    cout<<"Sum of m except the diagonal "<<non_diagonal_sum<<endl;
+}
+
+void generateMatrix(vector<vector<int>>&Matrix,int num_rows, int num_cols){
+
+    for(auto it_row = Matrix.begin();it_row != Matrix.end();it_row++){
+        for(auto it_col = it_row->begin(); it_col != it_row->end(); it_col++){
+            *it_col = rand() %(201)-100;
+        }
+    }
+}
+
+
+void matrixAddition(vector<vector<int>>&M1, vector<vector<int>>&M2, vector<vector<int>>&MPlus,int num_rows,int num_cols){
+   for(int i = 0; i < num_rows; ++i){
+        for(int j = 0; j < num_cols; ++j){
+            MPlus[i][j] = M1[i][j] + M2[i][j];
+        }
+    }
+}
+
+void matrixSubstraction(vector<vector<int>>&M1, vector<vector<int>>&M2, vector<vector<int>>&MMinus,int num_rows,int num_cols){
+   for(int i = 0; i < num_rows; ++i){
+        for(int j = 0; j < num_cols; ++j){
+            MMinus[i][j] = M1[i][j] - M2[i][j];
+        }
+    }
+}
+
+    
+void printMatrix(vector<vector<int>>&Matrix,int row, int col){
+    for (auto it_row = Matrix.begin(); it_row != Matrix.end(); it_row++){
+        for (auto it_col = it_row->begin(); it_col != it_row->end(); it_col++){
+        cout << *it_col << " ";
+        }
+        cout << endl;
+} 
+
+// void printStructMatrix(){
+
+// }
+
+}
+int rowAvg(vector<vector<int>>&M1, int& rand_row){
+    int i,j;
+    int sum = 0;
+    for (i = rand_row-1; i < rand_row; ++i) {
+        for (j = 0; j < 4; ++j) {
+            // Add the element
+            sum += M1[i][j];
+        }
+    }
+    // cout<<rand_row<<endl;
+    // cout<<sum;
+    return sum;
+}
+
+struct HorzRow{
+    int rand_row;
+    vector<vector<int>>vec;
+    int rowAvg;
+};
+
+
+int main(){
+    // Using RealMatrix as it is
+RealMatrix m ={
+                { 2, 2, 0, 11 },
+                { 3, 4, 5, 0 },
+                { -1, 2, -1, 7 }
+            };
+
+//Add next row
+m.push_back({ 5, 3, 5, -3 });
+ srand(time(0));
+nonDiagonalSum(m);
+
+int num_rows=4;
+int num_cols=4;
+vector<vector<int>>M1(num_rows,vector<int>(num_cols,0));
+vector<vector<int>>M2(num_rows,vector<int>(num_cols,0));
+vector<vector<int>>MPlus(num_rows,vector<int>(num_cols,0));
+vector<vector<int>>MMinus(num_rows,vector<int>(num_cols,0));
+
+cout<<"\nFirst Matrix M1"<<endl;
+generateMatrix(M1,num_rows, num_cols);
+printMatrix(M1,num_rows, num_cols);
+
+cout<<"\nSecond Matrix M2"<<endl;
+generateMatrix(M2,num_rows, num_cols);
+printMatrix(M2,num_rows, num_cols);
+
+cout<<"\nAddition"<<endl;
+matrixAddition(M1,M2,MPlus,num_rows,num_cols);
+printMatrix(MPlus,num_rows, num_cols);
+
+cout<<"\nSubstraction"<<endl;
+matrixSubstraction(M1,M2,MMinus,num_rows,num_cols);
+printMatrix(MMinus,num_rows, num_cols);
+
+int rand_row=(rand()%4)+1;
+
+
+HorzRow horzRow=
+{
+    rand_row,
+    M1,
+    rowAvg(M1,rand_row),
+};
+cout<<"\nRow ID: "<<horzRow.rand_row<<endl;
+
+for (int i = 0; i < horzRow.vec.size(); i++)
+    {
+        for (int j = 0; j < horzRow.vec[i].size(); j++)
+        {
+            cout << horzRow.vec[i][j] << " ";
+        }    
+        cout << endl;
+    }
+cout<<"Average of Row:"<<horzRow.rowAvg<<endl;
+
+}
